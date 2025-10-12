@@ -1,0 +1,32 @@
+# ----------------------
+# Node.js / Backend
+# ----------------------
+node_modules/
+npm-debug.log
+yarn-error.log
+.env                # environment variables (DB URI, JWT secrets)
+
+# Optional (if using logs)
+logs/
+*.log
+
+# Optional: OS-specific files
+.DS_Store
+Thumbs.db
+
+# ----------------------
+# React / Frontend
+# ----------------------
+frontend/node_modules/
+frontend/build/      # production build
+frontend/.env        # if you have frontend environment variables
+frontend/.DS_Store
+frontend/yarn.lock   # optional (lockfile can be committed if needed)
+frontend/package-lock.json  # optional (lockfile can be committed)
+
+# ----------------------
+# Misc
+# ----------------------
+.idea/
+.vscode/
+*.swp
