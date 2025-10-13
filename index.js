@@ -2,10 +2,12 @@ import express from "express";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import cors from "cors";
 import { User, Transaction, Budget } from "./db.js";
 
 const app = express();
 app.use(express.json()); // Parse JSON body
+app.use(cors());
 
 // -------------------------
 // MongoDB Connection
@@ -183,5 +185,5 @@ app.delete("/budgets/:id", verifyToken, async (req, res) => {
 // -------------------------
 // SERVER START
 // -------------------------
-const PORT = 6000;
+const PORT = 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
