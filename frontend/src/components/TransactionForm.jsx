@@ -1,49 +1,37 @@
+// src/components/TransactionForm.jsx
 import React, { useState } from "react";
+import { addTransaction } from "../api/api";
 
-export default function TransactionForm({ token, onAdd }) {
+export default function TransactionForm({ onAdd }) {
   const [form, setForm] = useState({
     category: "",
     type: "Expense",
     amount: "",
-    date: new Date().toISOString().split('T')[0], // Today's date
+    date: new Date().toISOString().split("T")[0],
     note: "",
   });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await fetch("http://localhost:3001/transactions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-        body: JSON.stringify(form),
-      });
+      if (!form.category || !form.amount || !form.type) throw new Error("Please fill required fields");
 
-      const data = await res.json();
+      const payload = {
+        category: form.category,
+        amount: Number(form.amount),
+        type: form.type,
+        note: form.note,
+        date: form.date,
+      };
 
-      if (!res.ok) {
-        throw new Error(data.message || "Error adding transaction");
-      }
-
+      const res = await addTransaction(payload);
       alert("✅ Transaction added successfully!");
-      setForm({ 
-        category: "", 
-        type: "Expense", 
-        amount: "", 
-        date: new Date().toISOString().split('T')[0],
-        note: "" 
-      });
-
-      if (onAdd) onAdd(data);
+      setForm({ category: "", type: "Expense", amount: "", date: new Date().toISOString().split("T")[0], note: "" });
+      if (onAdd) onAdd(res.data);
     } catch (err) {
-      alert(err.message);
+      alert(err.response?.data?.message || err.message || "Error adding transaction");
     }
   };
 
@@ -51,12 +39,7 @@ export default function TransactionForm({ token, onAdd }) {
     <div className="form-container">
       <h3>Add Transaction</h3>
       <form onSubmit={handleSubmit} className="form">
-        <select
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          required
-        >
+        <select name="category" value={form.category} onChange={handleChange} required>
           <option value="">Select Category</option>
           <option value="Food">Food</option>
           <option value="Transport">Transport</option>
@@ -71,30 +54,11 @@ export default function TransactionForm({ token, onAdd }) {
           <option value="Income">Income</option>
         </select>
 
-        <input
-          type="number"
-          name="amount"
-          placeholder="Amount"
-          value={form.amount}
-          onChange={handleChange}
-          required
-        />
+        <input type="number" name="amount" placeholder="Amount" value={form.amount} onChange={handleChange} required />
 
-        <input
-          type="date"
-          name="date"
-          value={form.date}
-          onChange={handleChange}
-          required
-        />
+        <input type="date" name="date" value={form.date} onChange={handleChange} required />
 
-        <input
-          type="text"
-          name="note"
-          placeholder="Note (optional)"
-          value={form.note}
-          onChange={handleChange}
-        />
+        <input type="text" name="note" placeholder="Note (optional)" value={form.note} onChange={handleChange} />
 
         <button type="submit">Add Transaction</button>
       </form>

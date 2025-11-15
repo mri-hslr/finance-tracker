@@ -1,18 +1,22 @@
-import React from "react";
+// src/pages/Dashboard.jsx
+import React, { useState } from "react";
+import NavBar from "../components/Navbar";
 import TransactionForm from "../components/TransactionForm";
 import TransactionList from "../components/TransactionList";
 
-export default function Dashboard({ token, onLogout }) {
+export default function Dashboard({ onLogout }) {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleAdd = () => setRefreshKey((k) => k + 1);
+
   return (
-    <div style={{ maxWidth: "700px", margin: "auto", padding: "1.5rem" }}>
+    <div style={{ maxWidth: "900px", margin: "auto", padding: "1.5rem" }}>
+      <NavBar onLogout={onLogout} />
       <div className="dashboard-header">
         <h2>Finance Tracker</h2>
-        <button onClick={onLogout} className="logout-btn">
-          Logout
-        </button>
       </div>
-      <TransactionForm token={token} />
-      <TransactionList token={token} />
+      <TransactionForm onAdd={handleAdd} />
+      <TransactionList refreshKey={String(refreshKey)} />
     </div>
   );
 }

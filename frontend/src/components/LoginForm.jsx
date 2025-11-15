@@ -1,5 +1,7 @@
+// src/components/LoginForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../api/api";
 
 export default function LoginForm({ onLogin }) {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -13,15 +15,10 @@ export default function LoginForm({ onLogin }) {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:3001/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      const res = await loginUser(form);
+      const data = res.data;
 
-      const data = await res.json();
-
-      if (!res.ok) {
+      if (!data.token) {
         throw new Error(data.message || "Login failed");
       }
 
@@ -29,12 +26,12 @@ export default function LoginForm({ onLogin }) {
       alert("✅ Login successful!");
       navigate("/dashboard");
     } catch (err) {
-      alert(err.message);
+      alert(err.response?.data?.message || err.message || "Login failed");
     }
   };
 
   return (
-    <div className="form-container">
+    <div className="form-container auth-container">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <input
@@ -56,7 +53,7 @@ export default function LoginForm({ onLogin }) {
         <button type="submit">Login</button>
       </form>
 
-      <p>
+      <p style={{ marginTop: "1rem", textAlign: "center" }}>
         Don’t have an account?{" "}
         <a href="/register" style={{ color: "#4caf50" }}>
           Register here
